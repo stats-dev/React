@@ -1,24 +1,18 @@
-import logo from './logo.svg';
-import './App.css';
+import ScssComponent from "./components/ScssComponent";
+import CssModule from "./cssmodule/CssModule";
+import StyledComponent from "./components/StyledComponent";
 
+
+//npm install해서 scss를 찾는다.
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <>
+      {/* <ScssComponent></ScssComponent>   */}
+      {/* <CssModule></CssModule> */}
+      {/* 여기서 렌더링을 합니다. */}
+      <StyledComponent></StyledComponent>
+
+    </>
   );
 }
 

@@ -1,0 +1,22 @@
+.wrapper {
+    background: black;
+    padding: 1rem;
+    color: white;
+    font-size: 2rem;
+}
+
+.inverted {
+    color: black;
+    background: white;
+    border: 1px solid black;
+}
+
+/* 전역으로 사용할 클래스 스타일 지정
+    global 클래스는 className 속성에 String 형태로 넣어주면된다.
+*/
+/* :global 변수명 주면 전역 클래스 스타일 가능 */
+:global .text {
+    font-weight: bold;
+    color: red;
+    font-size: 3rem;
+}
