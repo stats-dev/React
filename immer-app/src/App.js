@@ -1,4 +1,7 @@
 import React, {useState, useCallback, useEffect, useRef} from 'react';
+//불변성을 유지하기 위한 produce 메소드 임포트
+import {produce} from 'immer';
+
 
 function App() {
   //유일한 값을 만들때..useRef  //useRef를 DOM이 아닌 javascript에서도 유일한 값으로 사용할 수 있다.
@@ -24,17 +27,14 @@ function App() {
     // console.log("e.target.name=======> " + name);
     // console.log("e.target.value======> " + value);
 
-    setForm({
-      //현재 form의 값을 그대로 사용
-      //{username: "", password: ""}
-      ...form,
-      //username: "",
-      //password: ""
-      [name]: value
-      //password input에 값을 입력했다고 가정하면
-      //username: "",
-      //password: 입력한 값
-    });
+    setForm(
+      //produce 메소드 호출
+      //화살표 함수를 넘겨주는데 화살표 함수의 매개변수로는 form의 현재값이 들어간다.
+      produce((draft) => {
+        //현재 form에 name 키에 새로운 value를 넣는다.
+        draft[name] = value;
+      })
+    )
     /*form => {
       username: "",
       password: 입력한 값
@@ -53,10 +53,11 @@ function App() {
       password: form.password
     }
 
-    setData({
-      ...data,
-      array: data.array.concat(info) //data는 객체형태이므로 array로 변환해줘야 한다. concat은 array 변환 필요.
-    });
+    setData(
+      produce((draft) => {
+        draft.array.push(info);
+      })
+    );
 
     setForm({
       username: "",
