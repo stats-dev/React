@@ -19,27 +19,9 @@ const bulkTodos = () => {
 
 function App() {
   const [todos, setTodos] = useState(bulkTodos);
-  // const [todos, setTodos] = useState([
-  //   //객체 array
-  //   {
-  //     id: 1,
-  //     text: 'react',
-  //     checked: true
-  //   },
-  //   {
-  //     id: 2,
-  //     text: 'es6',
-  //     checked: false
-  //   },
-  //   {
-  //     id: 3,
-  //     text: 'html/css',
-  //     checked: false
-  //   }
-  // ]);
 
   //todos의 고유한 id를 생성하기 위한 useRef 3번까지 있으니 4번도 실행.
-  const nextId = useRef(4);
+  const nextId = useRef(2501);
 
   //todoInsert에서 새로운 todo추가 하는 메소드
   const addTodos = useCallback((text) => {
@@ -49,8 +31,13 @@ function App() {
       checked: false
     };
 
-    setTodos(todos =>
-      todos.concat(todo)); //새로운 내용을 추가한다.
+    //setter 메소드를 함수형으로 변경하고
+    //매개변수를 넣어주면 이전의 state값이 매개변수에 담긴다.
+    //특이사항이 없을 때는 setter메소드를 함수형으로 작성한다.
+    setTodos(todos => {
+      console.log(todos);
+      return todos.concat(todo);
+    }); //새로운 내용을 추가한다.
 
     nextId.current += 1;
     //todos의 변경이 있어야만 메소드가 생성될 수 있게 한다.
@@ -61,20 +48,17 @@ function App() {
 
     //filter 메소드로 id에 해당하는 todo 삭제
     setTodos(
-      todos =>
       // 배열은 그 상태로 집어넣으면 된다. 따로 {} 해서 객체로 쓸 수 없다.
       todos.filter((todo) => todo.id !== id)
     );
 
-  }, []);
+  }, [todos]);
 
 
   //checkBox 이벤트 발생 시 checked 변경 메소드
   // id를 받아옵니다.
   const changeChecked = useCallback((id) => {
     setTodos(
-      // 함수형 도입
-      todos =>
         // 배열.map() 메소드는 새로운 배열 리턴
         todos.map(
           //매개변수로는 하나씩 순회하면서 사용할 변수명 원하는 대로 지정. 여기서는 t로 지정.
@@ -98,17 +82,6 @@ function App() {
     );
   }, [todos]);
 
-
-  // // changeChecked 대괄호 map 함수
-  // const changeChecked = useCallback((id) => {
-  //   setTodos(
-  //       todos.map((todo) => {
-  //         //삼항 연산자로 무언가 해야 한다.
-  //         // todo.checked 클릭한 것과 todos의 값이 같을 때만 check 표시를 함.
-  //         return todo.id === id ? {...todo, checked: !todo.checked } : todo
-  //       })
-  //   );
-  // }, [todos]);
 
   return (
     <TodoTemplate>
