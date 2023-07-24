@@ -3,25 +3,40 @@ import TodoInsert from "./components/TodoInsert";
 import TodoList from "./components/TodoList";
 import { useCallback, useState, useRef } from "react";
 
-function App() {
-  const [todos, setTodos] = useState([
-    //객체 array
-    {
-      id: 1,
-      text: 'react',
-      checked: true
-    },
-    {
-      id: 2,
-      text: 'es6',
-      checked: false
-    },
-    {
-      id: 3,
-      text: 'html/css',
+const bulkTodos = () => {
+  const todoArray = [];
+  for(let i = 1; i <= 2500; i++) {
+    const todo = {
+      id: i,
+      text: `할 일${i}`,
       checked: false
     }
-  ]);
+
+    todoArray.push(todo);
+  }
+  return todoArray;
+}
+
+function App() {
+  const [todos, setTodos] = useState(bulkTodos);
+  // const [todos, setTodos] = useState([
+  //   //객체 array
+  //   {
+  //     id: 1,
+  //     text: 'react',
+  //     checked: true
+  //   },
+  //   {
+  //     id: 2,
+  //     text: 'es6',
+  //     checked: false
+  //   },
+  //   {
+  //     id: 3,
+  //     text: 'html/css',
+  //     checked: false
+  //   }
+  // ]);
 
   //todos의 고유한 id를 생성하기 위한 useRef 3번까지 있으니 4번도 실행.
   const nextId = useRef(4);
