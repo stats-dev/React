@@ -4,12 +4,20 @@ import '../scss/TodoList.scss';
 
 
 
-const TodoList = () => {
+const TodoList = ({todos}) => { 
+  // todos라는 키로 이걸 받아주겠다.
   return (
     <div className='TodoList'>
-        <TodoListItem></TodoListItem>
-        <TodoListItem></TodoListItem>
-        <TodoListItem></TodoListItem>
+      {/* map 메소드로 todos 배열의 내용을 하나씩 TodoListItem의 props로 보내기 key는 todos의 id 값으로 */}
+        {/* 단축평가 */}
+        {todos && todos.map((todo) => 
+          // 객체인 todo 자체도 바로 보낼 수 있다. 굳이 아래처럼 안 나눠도 될 듯 싶다. 이걸 다시 todolistItem에 가서 받아준다.
+          <TodoListItem key={todo.id} todo={todo}></TodoListItem>)}
+
+        {/* {todos.map((todo) => (
+              <TodoListItem key={todo.id} id={todo.id} text={todo.text} checked={todo.checked}/>
+          
+          ))} */}
     </div>
   )
 }

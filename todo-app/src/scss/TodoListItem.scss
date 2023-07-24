@@ -22,8 +22,8 @@
             margin-left: 0.5rem;
             flex: 1;
         }
-        //체크되었을 때 보여줄 스타일
-        &:checked {
+        //체크되었을 때 보여줄 스타일 :이 아니라 .checked라는 클래스를 줘야한다.
+        &.checked {
             svg{
                 color: #22b8cf;
             }
