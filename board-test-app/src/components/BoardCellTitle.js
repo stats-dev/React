@@ -22,7 +22,6 @@ const BoardCellTitle = () => {
 
   return (
     <BoardCellTitleBlock>
-        <BoardCellTitle>게시글 목록</BoardCellTitle>
         <BoardTitleCell style={{width: '100px'}}>번호</BoardTitleCell>
         <BoardTitleCell style={{width: '350px'}}>제목</BoardTitleCell>
         <BoardTitleCell style={{width: '70px'}}>작성자</BoardTitleCell>
