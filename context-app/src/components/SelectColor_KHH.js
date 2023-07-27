@@ -9,7 +9,7 @@ const SelectColor = () => {
     <div>
         <h1>색상 선택</h1>
         <ColorConsumer>
-            {({actions}) => (
+            {value => (
                 <div style={{display: 'flex'}}>
                     {colorArr && colorArr.map(
                     // 고유한 color만으로 key 값을 넣는다.
@@ -20,10 +20,10 @@ const SelectColor = () => {
                     // props 전달 하나도 없이 state 값을 바꾼다.
                     (color, index) => (
                         <div key={index} style={{width: '25px', height: '25px', background: color, cursor: 'pointer'}} 
-                        onClick={() => actions.setColor(color)} 
+                        onClick={() => value.actions.setColor(color)} 
                         onContextMenu={(e) => {
                             e.preventDefault(); //우클릭시 메뉴 안뜨도록 만든다.
-                            actions.setSubColor(color);
+                            value.actions.setSubColor(color);
                         }}></div>
                     )
                 )}

@@ -1,6 +1,8 @@
 //createContext로 생성한 context를 export한다.
 import {createContext, useState} from 'react';
 
+//context 생성
+//Provider, Consumer를 소유
 const ColorContext = createContext({
     state: {color: 'black', subColor: 'red'},
     actions: {
