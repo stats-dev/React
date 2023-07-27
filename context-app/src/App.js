@@ -3,8 +3,25 @@ import SelectColor from "./components/SelectColor";
 import {ColorProvider} from "./contexts/color";
 
 function App() {
+  const test = {
+    a: 1,
+    b: 2
+  };
+
+  const funcObj = {
+    a: 1,
+    b: 2
+  }
+
+  const testFunc = (obj) => {
+
+  }
+
+  testFunc((funcObj) => {
+
+  });
   return (
-    //<ColorContext.Provider value={값}> 이것과 동일해진다고 볼 수 있다?
+    //<ColorContext.Provider value={값}>
     <ColorProvider>
       <div>
         <SelectColor></SelectColor>
