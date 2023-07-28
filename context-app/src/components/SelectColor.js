@@ -7,10 +7,10 @@ const colorArr = ['black', 'red', 'green', 'blue', 'yellow', 'orange', 'gray', '
 const SelectColor = () => {
   return (
     <div>
-        <h1>색상 선택</h1>
+        <h1 style={{margin: '10px'}}>색상 선택</h1>
         <ColorConsumer>
             {({actions}) => (
-                <div style={{display: 'flex'}}>
+                <div style={{display: 'flex', margin: '10px'}}>
                     {colorArr && colorArr.map(
                     // 고유한 color만으로 key 값을 넣는다.
                     // color => (

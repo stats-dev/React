@@ -6,8 +6,8 @@ const ColorBox = () => {
     <ColorConsumer>
         {value => (
             <div>
-                <div style={{width: '100px', height: '100px', background: value.state.color}}></div>
-                <div style={{width: '50px', height: '50px', background: value.state.subColor}}></div>
+                <div style={{width: '100px', height: '100px', background: value.state.color, 'margin-left': '10px'}}></div>
+                <div style={{width: '50px', height: '50px', background: value.state.subColor, 'margin-left': '10px'}}></div>
             </div>
         )}
         {/* {({state}) => (
