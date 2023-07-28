@@ -1,32 +1,43 @@
+import { useCallback, useState, useEffect } from "react";
 import TodoTemplate from "./components/TodoTemplate";
 import TodoInsert from "./components/TodoInsert";
 import TodoList from "./components/TodoList";
-import { useCallback, useState, useRef } from "react";
-
-const bulkTodos = () => {
-  const todoArray = [];
-  for(let i = 1; i <= 2500; i++) {
-    const todo = {
-      id: i,
-      text: `할 일${i}`,
-      checked: false
-    }
-
-    todoArray.push(todo);
-  }
-  return todoArray;
-}
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 function App() {
-  const [todos, setTodos] = useState(bulkTodos);
+  const [todos, setTodos] = useState([]);
+  const navi = useNavigate();
+ 
+ 
+  //처음 렌더링될 때 DB에 저장되어있는 리스트 호출하기
+  useEffect(() => {
+    const token = localStorage.getItem("ACCESS_TOKEN");
+    console.log(token);
+    const getTodoList = async () => {
+      try {
+        const response = await axios.get('http://localhost:9090/api/todo/todo', {
+          //config 자리에 헤더, 파라미터를 여기에 넣는다.
+          headers: {
+            // Authorization: `Bearer ${localStorage.getItem("ACCESS_TOKEN")}`//Boot에 있는 getHeader
+            "Authorization": "Bearer " + token
+          }
+        });
 
-  //todos의 고유한 id를 생성하기 위한 useRef 3번까지 있으니 4번도 실행.
-  const nextId = useRef(2501);
+        console.log(response);
+      } catch(e) {
+        console.log(e)
+        navi("/login");
+      }
+    };
+
+    getTodoList();
+  }, []);
 
   //todoInsert에서 새로운 todo추가 하는 메소드
   const addTodos = useCallback((text) => {
     const todo = {
-      id: nextId.current,
+      id: todos.length + 1,
       text: text,
       checked: false
     };
@@ -39,7 +50,6 @@ function App() {
       return todos.concat(todo);
     }); //새로운 내용을 추가한다.
 
-    nextId.current += 1;
     //todos의 변경이 있어야만 메소드가 생성될 수 있게 한다.
   }, []);
 

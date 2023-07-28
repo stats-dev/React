@@ -1,4 +1,5 @@
-import React from 'react'
+import React, {useCallback} from 'react'
+
 import {
     Button,
     TextField,
@@ -7,11 +8,50 @@ import {
     Container,
     Typography
 } from "@mui/material";
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
+
 
 const Login = () => {
+    const navi = useNavigate();
+
+    const onSubmit = useCallback((e) => {
+        e.preventDefault();
+
+        const data = new FormData(e.target);
+        const username = data.get("username");
+        const password = data.get("password");
+
+        login(username, password);
+    }, []);
+
+    const login = useCallback(async (username, password) => {
+        try {
+            const response = await axios.post('http://localhost:9090/api/member/login', 
+            {username: username, password: password});
+
+            if(response.data && response.data.item.token !== null && response.data.item.token !== "") {
+                localStorage.setItem("ACCESS_TOKEN", response.data.item.token);
+                navi("/")
+            }
+
+            console.log(response);
+
+            // //회원가입이 완료되면 로그인 화면 가도록 함.
+            // if(response.data && response.data.statusCode === 200) {
+            //     navi('/');
+            // }
+
+        } catch(e) {
+            alert(e.response.data.errorMessage);
+        }
+    }, []);
+
+
+
   return (
     <Container component="main" maxWidth="xs" style={{marginTop: "8%"}}> 
-        <form>
+        <form onSubmit={onSubmit}>
             <Grid container spacing={2}>
                 <Grid item xs={12}>
                     <Typography component="h1" variant="h5">
