@@ -8,15 +8,14 @@ import {
     Typography
 } from "@mui/material";
 
-const Join = () => {
+const Login = () => {
   return (
     <Container component="main" maxWidth="xs" style={{marginTop: "8%"}}> 
-    {/* margin-top 이 아니라 marginTop */}
         <form>
             <Grid container spacing={2}>
                 <Grid item xs={12}>
                     <Typography component="h1" variant="h5">
-                        회원가입
+                        로그인
                     </Typography>
                 </Grid>
                 <Grid item xs={12}>
@@ -31,7 +30,7 @@ const Join = () => {
                     ></TextField>
                 </Grid>
                 <Grid item xs={12}>
-                    <TextField //TextField는 input 대신 사용하는 컴포넌트입니다.
+                    <TextField
                         name="password"
                         variant="outlined"
                         required
@@ -43,13 +42,13 @@ const Join = () => {
                 </Grid>
                 <Grid item xs={12}>
                     <Button type='submit' fullWidth variant='contained'
-                    color='primary'>회원가입</Button>
+                    color='primary'>로그인</Button>
                 </Grid>
             </Grid>
             <Grid container justifyContent="flex-end">
                 <Grid item>
-                    <Link href='/login' variant='body2'>
-                        이미 계정이 있습니까? 로그인하세요.
+                    <Link href='/join' variant='body2'>
+                        계정이 없으시면 여기서 회원가입하세요.
                     </Link>
                 </Grid>
             </Grid>
@@ -58,4 +57,4 @@ const Join = () => {
   )
 }
 
-export default Join
+export default Login
