@@ -16,7 +16,7 @@ function App() {
         const response = await axios.get('http://localhost:9090/api/todo/todo', {
           // params: {
           //   id: id
-          // },
+          // }, 
           headers: {
             Authorization: `Bearer ${localStorage.getItem("ACCESS_TOKEN")}`
           }
@@ -37,8 +37,23 @@ function App() {
   const addTodos = useCallback((text) => {
     console.log(todos.length);
 
+    let id = 0;
+
+    todos.forEach(t => {
+      if(t.id > id) {
+        id = t.id; //max값 꺼내서 +1을 하는 메소드.
+      }
+    });
+
+    // for(t of todos) {
+    //   if(t.id > id) {
+    //     // todos[t]
+    //     id = t.id;
+    //   }
+    // }
+
     const todo = {
-      id: todos.length + 1,
+      id: id + 1,
       text: text,
       checked: false
     };
