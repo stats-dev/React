@@ -1,8 +1,9 @@
 import React from 'react';
 import styled from 'styled-components';
 import {Link, Outlet} from 'react-router-dom';
+import '../css/Layout.css'; //css도 임포트 해줘야한다.
 
-const userNav = styled.ul`
+const UserNav = styled.ul`
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -55,6 +56,11 @@ const layout = () => {
             {/* 중첩태그는 Outlet을 활용 */}
             <Outlet></Outlet>
         </main>
+        <footer>
+            <div>
+                <p>copyright 비트캠프</p>
+            </div>
+        </footer>
     </>
   )
 }
