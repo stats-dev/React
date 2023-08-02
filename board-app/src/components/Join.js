@@ -1,8 +1,11 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import '../css/Join.css';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 const Join = () => {
+    const navi = useNavigate();
+
     const [userId, setUserId] = useState('');
     const [userPw, setUserPw] = useState('');
     const [userPwCheck, setuserPwCheck] = useState('');
@@ -10,24 +13,34 @@ const Join = () => {
     const [userEmail, setUserEmail] = useState('');
     const [userTel, setUserTel] = useState('');
 
-    let checkId = false;
-    //이 값을 추가한다. boot에 있는 id 값을 가져왔다.
-    let pwValidation = false;
-    let pwCheck = false;
+    const [checkId, setCheckId] = useState(false);
+    const [pwValidation, setPwValidation] = useState(false);
+    const [pwCheck, setPwCheck] = useState(false);
+
+    // //전역변수 다 state로 만들어야 한다.
+    // let checkId = false;
+    // //이 값을 추가한다. boot에 있는 id 값을 가져왔다.
+    // let pwValidation = false;
+    // let pwCheck = false;
 
     //userId 변경 시 작동하는 메소드
     const changeUserId = useCallback((e) => {
         const idCheckBtn = document.getElementById('btnIdCheck');
         setUserId(() => e.target.value);
-        checkId = false;
         e.target.disabled = false;
     }, []);
+
+    //userId state가 변경되면 checkId를 무조건 false
+    useEffect(() => {
+        setCheckId(() => false);
+    }, [userId]);
 
 
       
     const idCheck = useCallback((e) => {
         const userIdInput = document.getElementById('userId');
         const idCheckAxios = async () => {
+
             try {
                 // 받아주는 userDTO 객체 동일하게 넘기기 userId
                 const response = await axios.post('http://localhost:9090/user/id-check', {userId: userId});
@@ -36,11 +49,13 @@ const Join = () => {
 
                 if(response.data && response.data.item.idCheckMsg === 'idOk') {
                     alert('사용가능한 아이디입니다.');
-                    checkId = true;
+                    setCheckId(() => true); //state로 처리한다.
+                    // checkId = true;
                     e.target.disabled = true;
                 } else {
                     alert('중복된 아이디입니다.');
-                    checkId = false;
+                    setCheckId(() => false); //state로 처리한다.
+                    // checkId = false;
                     userIdInput.focus();
                 }
             } catch(e) {
@@ -69,12 +84,14 @@ const Join = () => {
         const pwValidationTag = document.getElementById('pwValidation');
         if(validatePassword(userPw)) {
             //true
-            pwValidation = true;
+            setPwValidation(() => true);
+            // pwValidation = true;
             pwValidationTag.style.display = 'none';
 
         } else {
             //false
-            pwValidation = false;
+            setPwValidation(() => false);
+            // pwValidation = false;
             pwValidationTag.style.display = 'block';
         }
     }, [userPw]);
@@ -91,11 +108,13 @@ const Join = () => {
         if(userPwCheck === userPw) {
             pwCheckResult.style.color = 'green';
             pwCheckResult.textContent = '비밀번호가 일치합니다.';
-            pwCheck = true;
+            // pwCheck = true;
+            setPwCheck(() => true);
         } else {
             pwCheckResult.style.color = 'red';
             pwCheckResult.textContent = '비밀번호가 일치하지 않습니다.';
-            pwCheck = false;
+            // pwCheck = false;
+            setPwCheck(() => false);
         }
     }, [userPw, userPwCheck]);
 
@@ -132,13 +151,20 @@ const Join = () => {
                 const response = await axios.post('http://localhost:9090/user/join', user);
 
                 console.log(response);
+
+                //response data가 있고 아이템에 아이디가 있다면?
+                if(response.data && response.data.item.id) {
+                    alert("회원가입이 완료되었습니다.");
+                    navi('/login');
+                }
             } catch(e) {
                 console.log(e);
             }
         }
 
         join();
-    }, [userId, userPw, userName, userEmail, userTel]);
+        //모두 변경이 일어난 다음에야 새로운 값응로 인식하도록 checkId, pwValidation, pwCheck 넣는다.
+    }, [userId, userPw, userName, userEmail, userTel, checkId, pwValidation, pwCheck]);
 
   return (
     <div className="form-wrapper">

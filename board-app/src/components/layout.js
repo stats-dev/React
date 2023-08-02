@@ -14,7 +14,7 @@ const UserNavItem = styled.li`
     font-size: 0.9 rem;
 `;
 
-const layout = () => {
+const layout = ({isLogin}) => {
   return (
     <>
         <header>
@@ -30,7 +30,8 @@ const layout = () => {
             </nav>
             <nav>
                 {
-                    localStorage.getItem("ACCESS_TOKEN") 
+                    //매번 로그인 정보를 가져올 수 없다. 그래서 단축 입력을 사용하여 조건에 맞는 경우만 호출한다.
+                    isLogin && localStorage.getItem("ACCESS_TOKEN") 
                     ?
                     <UserNav>
                         <UserNavItem>
