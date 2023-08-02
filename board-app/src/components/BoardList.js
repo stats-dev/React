@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import BoardListItem from './BoardListItem';
+import { Link } from 'react-router-dom';
 
 const BoardList = () => {
     const [boardList, setBoardList] = useState([
@@ -77,8 +78,12 @@ const BoardList = () => {
             ))}
             
         </table>
-        <br/>
+        
+        
+        
+        <Link to="/insert-board">새 글 등록</Link>
         </div>
+
   )
 }
 
