@@ -37,6 +37,7 @@ const Login = ({setIsLogin}) => {
                 if(response.data && response.data.item.token) {
                     alert(`${response.data.item.userName}님 환영합니다.`);
                     sessionStorage.setItem("ACCESS_TOKEN", response.data.item.token);
+                    sessionStorage.setItem("userId", response.data.item.userId);
                     setIsLogin(true);
                     navi("/");
                 }

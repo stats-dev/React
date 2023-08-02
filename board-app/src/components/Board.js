@@ -1,7 +1,35 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { useCallback, useEffect, useState } from 'react';
+import { Link, useParams } from 'react-router-dom';
+import axios from 'axios';
 
 const Board = () => {
+    const {boardNo} = useParams();
+    const [board, setBoard] = useState(null);
+
+
+
+
+    useEffect(() => {
+        const getBoard = async() => {
+            try {
+                const response = await axios.get(`http://localhost:9090/board/board/${boardNo}`, {
+                    headers: {
+                        Authorization: `Bearer ${sessionStorage.getItem("ACCESS_TOKEN")}`
+                    }
+                });
+
+                console.log(response);
+                if(response.data && response.data.item.board) {
+                    setBoard(() => response.data.item.board);    
+                }
+
+            } catch (e) {
+                console.log(e);
+            }
+        }
+
+        getBoard();
+    }, []);
   return (
         <div style={{display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center'}}>
                 <h3>게시글 상세</h3>
@@ -12,7 +40,7 @@ const Board = () => {
                                 제목
                             </td>
                             <td style={{textAlign: 'left'}}>
-                                <input type="text" name="boardTitle" id="boardTitle"></input>
+                                <input type="text" name="boardTitle" id="boardTitle" value={board ? board.boardTitle : ''}></input>
                             </td>
                         </tr>
                         <tr>
@@ -20,7 +48,7 @@ const Board = () => {
                                 작성자
                             </td>
                             <td style={{textAlign: 'left'}}>
-                                <input type="text" name="boardWriter" id="boardWriter" readonly></input>
+                                <input type="text" name="boardWriter" id="boardWriter" readonly value={board ? board.boardWriter : ''}></input>
                             </td>
                         </tr>
                         <tr>
@@ -28,7 +56,7 @@ const Board = () => {
                                 내용
                             </td>
                             <td style={{textAlign: 'left'}}>
-                                <textarea name="boardContent" id="boardContent" cols="40" rows="10"></textarea>
+                                <textarea name="boardContent" id="boardContent" cols="40" rows="10" value={board ? board.boardContent : ''}></textarea>
                             </td>
                         </tr>
                         <tr>
@@ -36,6 +64,7 @@ const Board = () => {
                                 작성일
                             </td>
                             <td style={{textAlign: 'left'}}>
+                                {board ? board.boardRegdate : ''}
                             </td>
                         </tr>
                         <tr>
@@ -43,6 +72,7 @@ const Board = () => {
                                 조회수
                             </td>
                             <td style={{textAlign: 'left'}}>
+                                {board ? board.boardCnt : ''}
                             </td>
                         </tr>
                         <tr>
