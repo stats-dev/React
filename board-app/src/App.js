@@ -9,7 +9,7 @@ import InsertBoard from './components/InsertBoard';
 import Board from './components/Board';
 
 function App() {
-  const [isLogin, setIsLogin] = useState(false);
+  const [isLogin, setIsLogin] = useState(sessionStorage.getItem("ACCESS_TOKEN") ? true : false);
 
   return (
     <Routes>
