@@ -6,11 +6,14 @@ import FileList from './FileList';
 const Board = () => {
     const {boardNo} = useParams();
     const navi = useNavigate();
-    const uploadFiles = [];
 
+    //const uploadFiles = [];
 
     const [board, setBoard] = useState(null);
     const [boardFileList, setBoardFileList] = useState(null);
+    const [originFileList, setOriginFileList] = useState([]);
+    const [changeFileList, setChangeFileList] = useState([]);
+    const [uploadFiles, setUploadFiles] = useState([]);
 
     useEffect(() => {
         const getBoard = async () => {
@@ -34,12 +37,26 @@ const Board = () => {
         getBoard();
     }, []);
 
+    useEffect(() => {
+        boardFileList && boardFileList.forEach(boardFile => {
+            const originBoardFile = {
+                boardNo: board.boardNo,
+                boardFileNo: boardFile.boardFileNo,
+                boardFileName: boardFile.boardFleName,
+                boardFileStatus: "N"
+            }
+
+            setOriginFileList((prev) => prev.concat(originBoardFile));
+        });
+    }, [boardFileList]);
+
     const addFiles = useCallback((e) => {
         const fileList = Array.prototype.slice.call(e.target.files);
-
+        
+        setUploadFiles(() => e.target.files);
+        
         fileList.forEach(file => {
             imageLoader(file);
-            uploadFiles.push(file);
         })
     }, []);
 
@@ -69,9 +86,9 @@ const Board = () => {
     }, []);
 
     //미리보기 메소드
-      //미리보기 영역에 들어갈 img 태그 생성 및 선택된 파일을
-      //Base 64 인코딩된 문자열 형태로 변환하여 미리보기 구현
-      const imageLoader = (file) => {
+    //미리보기 영역에 들어갈 img 태그 생성 및 선택된 파일을
+    //Base 64 인코딩된 문자열 형태로 변환하여 미리보기 구현
+    const imageLoader = (file) => {
 
         let reader = new FileReader();
 
@@ -91,7 +108,6 @@ const Board = () => {
           //미리보기 이미지 태그와 삭제 버튼 그리고 파일명을 표출하는 p태그
           //묶어주는 div를 만들어서 미리보기 영역에 추가
           document.getElementById('attZone').appendChild(makeDiv(img, file));
-          //jquery 기능 삭제함.
         }
 
         //파일을 BASE 64 인코딩 문자열로 변경
@@ -146,9 +162,6 @@ const Board = () => {
 
           document.getElementById('btnAtt').files = dt.files;
 
-        //   //jquery는 삭제
-        //   $("#btnAtt")[0].files = dt.files;
-
           //해당 img 태그를 담고 있는 div 삭제
           const parentDiv = ele.parentNode;
           parentDiv.remove();
@@ -166,19 +179,100 @@ const Board = () => {
 
         //완성된 div 리턴
         return div;
-      }
+    }
 
+    const addChangeFile = (file) => {
+        setChangeFileList((prev) => prev.concat(file));
+    }
+
+    const changeOriginFile = (boardFileNo, status, newFileName) => {
+        if(status === "U") {
+            setOriginFileList(() => originFileList.map(originFile => 
+                originFile.boardFileNo === boardFileNo ? {
+                    ...originFile,
+                    boardFileStatus: "U",
+                    newFileName: newFileName
+                } : originFile
+            ))
+        } else if(status === "D") {
+            setOriginFileList(() => originFileList.map(originFile => 
+                originFile.boardFileNo === boardFileNo ? {
+                    ...originFile,
+                    boardFileStatus: "D"
+                } : originFile
+            ))
+        }
+    }
+
+    const updateBoard = useCallback((e) => {
+        e.preventDefault();
+
+        const formData = new FormData(e.target);
+
+        const formDataObj = {};
+
+        formData.forEach((value, key) => formDataObj[key] = value);
+
+        const sendFormData = new FormData();
+
+        sendFormData.append("boardDTO", new Blob([JSON.stringify(formDataObj)], {
+            type: 'application/json'
+        }));
+
+        Array.from(uploadFiles).forEach(el => {
+            sendFormData.append("uploadFiles", el);
+        });
+
+        Array.from(changeFileList).forEach(el => {
+            sendFormData.append("changeFileList", el);
+        });
+
+        sendFormData.append("originFileList", JSON.stringify(originFileList));
+
+        const updateBoardAxios = async () => {
+            try {
+                const response = await axios.put('http://localhost:9090/board/board', sendFormData, {
+                    headers: {
+                        Authorization: `Bearer ${sessionStorage.getItem("ACCESS_TOKEN")}`,
+                        "Content-Type": "multipart/form-data"
+                    }
+                });
+
+                console.log(response);
+
+                if(response.data && response.data.item.board) {
+                    alert("정상적으로 수정되었습니다.");
+                    setBoard(() => response.data.item.board);
+                    setBoardFileList(() => response.data.item.boardFileList);
+                }
+            } catch(e) {
+                console.log(e);
+            }
+        }
+
+        updateBoardAxios();
+    }, [board, boardFileList, uploadFiles, originFileList, changeFileList]);
+
+    const changeTitle = useCallback((e) => {
+        setBoard((prev) => ({...prev, boardTitle: e.target.value}));
+    }, []);
+
+    const changeContent = useCallback((e) => {
+        setBoard((prev) => ({...prev, boardContent: e.target.value}));
+    }, []);
   return (
     <div style={{display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center'}}>
         <h3>게시글 상세</h3>
-        <form id="updateForm">
+        <form id="updateForm" onSubmit={updateBoard}>
+            <input type='hidden' name="boardNo" value={board ? board.boardNo : ''}></input>
+            <input type='hidden' name='boardRegdate' value={board ? board.boardRegdate : ''}></input>
             <table style={{borderCollapse: 'collapse', border: '1px solid black'}}>
                 <tr>
                     <td style={{background: 'skyblue', width: '70px'}}>
                         제목
                     </td>
                     <td style={{textAlign: 'left'}}>
-                        <input type="text" name="boardTitle" id="boardTitle" value={board ? board.boardTitle : ''}></input>
+                        <input type="text" name="boardTitle" id="boardTitle" value={board ? board.boardTitle : ''} onChange={changeTitle}></input>
                     </td>
                 </tr>
                 <tr>
@@ -194,7 +288,7 @@ const Board = () => {
                         내용
                     </td>
                     <td style={{textAlign: 'left'}}>
-                        <textarea name="boardContent" id="boardContent" cols="40" rows="10" value={board ? board.boardContent : ''}></textarea>
+                        <textarea name="boardContent" id="boardContent" cols="40" rows="10" value={board ? board.boardContent : ''} onChange={changeContent}></textarea>
                     </td>
                 </tr>
                 <tr>
@@ -228,7 +322,7 @@ const Board = () => {
                             <div id="attZone">
                                 {boardFileList 
                                 ? 
-                                <FileList boardFileList={boardFileList}></FileList>
+                                <FileList boardFileList={boardFileList} addChangeFile={addChangeFile} changeOriginFile={changeOriginFile}></FileList>
                                 :
                                 null}
                             </div>
@@ -237,7 +331,7 @@ const Board = () => {
                 </tr>
                 <tr id="btnWrap">
                     <td colspan="2" style={{textAlign: 'center'}}>
-                        <button type="button" id="btnUpdate">수정</button>
+                        <button type="submit" id="btnUpdate">수정</button>
                     </td>
                 </tr>
             </table>

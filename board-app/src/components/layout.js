@@ -31,7 +31,7 @@ const layout = ({isLogin}) => {
             <nav>
                 {
                     //매번 로그인 정보를 가져올 수 없다. 그래서 단축 입력을 사용하여 조건에 맞는 경우만 호출한다.
-                    isLogin && localStorage.getItem("ACCESS_TOKEN") 
+                    isLogin && sessionStorage.getItem("ACCESS_TOKEN") 
                     ?
                     <UserNav>
                         <UserNavItem>
