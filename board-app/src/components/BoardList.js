@@ -3,6 +3,7 @@ import BoardListItem from './BoardListItem';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 import Pagination from './Pagination';
+import { useNavigate } from 'react-router-dom';
 
 const BoardList = () => {
     const [boardList, setBoardList] = useState([])
@@ -12,6 +13,11 @@ const BoardList = () => {
     const [pageNumber, setPageNumber] = useState(0);
 
     const [pageSize, setPageSize] = useState(10);
+    //searchKeyword, searchCondition
+    const [searchCondition, setSearchCondition] = useState('all');
+    const [searchKeyword, setSearchKeyword] = useState("");
+    
+
 
 
         // 렌더링되자마자 axios를 통해 http://localhost:9090/board/board-list 에 있는 정보를 가져온다.
@@ -23,7 +29,9 @@ const BoardList = () => {
                             Authorization: `Bearer ${sessionStorage.getItem("ACCESS_TOKEN")}`
                         },
                         params: {
-                            page: page
+                            page: page,
+                            searchKeyword: searchKeyword,
+                            searchCondition: searchCondition
                         }
                     });
                     console.log(response);
@@ -31,17 +39,19 @@ const BoardList = () => {
                         //이렇게 데이터가 있으면 state가 바뀌어서 재 렌더링이 된다.
                         //페이지 아이템즈.content로 변경해야한다.
                     setBoardList(() => response.data.pageItems.content);
-                    setTotalPages(() => response.data.pageItems.totalgPages);
+                    setTotalPages(() => response.data.pageItems.totalPages);
                     setPageNumber(() => response.data.pageItems.pageable.pageNumber);
                     setPageSize(() => response.data.pageItems.pageable.pageSize);
                 }
             } catch(e) {
                 console.log(e);
             }
+            
         }
 
             getBoardList();
-        }, []);
+        }, [page]);
+
 
         const clickPrevNext = (num) => {
             setPage((prev) => prev + num);
@@ -50,23 +60,70 @@ const BoardList = () => {
         const changePage = (num) => {
             setPage(() => num - 1);
         }
-            
+
+        const changeSearchCondition = (e) => {
+            setSearchCondition(e.target.value); 
+        }
+
+        const changeSearchKeyword = (e) => {
+            setSearchKeyword(() => e.target.value);
+        }
+        const searchFormSubmit = (e) => {
+            e.preventDefault();
+
+            setPage(() => 0); //검색하면 페이지 0으로 세팅한다.
+
+            const searchAxios = async () => {
+                try {
+                    const response = await axios.get('http://localhost:9090/board/board-list', {
+                        headers: {
+                            Authorization: `Bearer ${sessionStorage.getItem("ACCESS_TOKEN")}`
+                        }
+                    ,
+                    params: {
+                        page: page,
+                        searchCondition: searchCondition,
+                        searchKeyword: searchKeyword
+                    }
+                });
+                    console.log(response);
+                    if(response.data && response.data.pageItems.content) {
+                        //이렇게 데이터가 있으면 state가 바뀌어서 재 렌더링이 된다.
+                        //페이지 아이템즈.content로 변경해야한다.
+                    setBoardList(() => response.data.pageItems.content);
+                    setTotalPages(() => response.data.pageItems.totalPages);
+                    setPageNumber(() => response.data.pageItems.pageable.pageNumber);
+                    setPageSize(() => response.data.pageItems.pageable.pageSize);
+                    }
+
+                } catch(e) {
+                    console.log(e);
+                }
+            }
+
+            searchAxios();
+        }
+
+
 
   return (
         <div style={{display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center'}}>
         <h3>게시글 목록</h3>
-        <form id="searchForm">
+        <form id="searchForm" onSubmit={searchFormSubmit}>
             <table style={{width: '700px', borderCollapse: 'collapse', border: '1px solid black'}}>
             <tr>
                 <td style={{textAlign: 'right'}}>
-                <select name="searchCondition">
+                <select name="searchCondition" value={searchCondition}
+                onChange={changeSearchCondition}>
                     <option value="all">전체</option>
                     <option value="title">제목</option>
                     <option value="content">내용</option>
                     <option value="writer">작성자</option>
                 </select>
-                <input type="text" name="searchKeyword"></input>
-                <button type="button" id="btnSearch">검색</button>
+                <input type="text" name="searchKeyword" 
+                        value={searchKeyword}
+                        onChange={changeSearchKeyword}></input>
+                <button type="submit" id="btnSearch">검색</button>
                 </td>
             </tr>
             </table>

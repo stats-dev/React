@@ -1,18 +1,23 @@
-import React from 'react';
-import { Link } from 'react-router-dom'; 
-import '../css/pagination.css';
+import React, { useEffect, useState } from 'react';
+import {Link} from 'react-router-dom';
+import '../css/Pagination.css';
 
 const Pagination = ({totalPages, pageNumber, pageSize, clickPrevNext, changePage}) => {
+    const [pageArr,setPageArr] = useState([]);
     
-    const startPage = Math.floor(pageNumber / pageSize) * pageSize + 1;
-    const tempEndPage = startPage + pageSize - 1;
-    const endPage = tempEndPage > totalPages ? totalPages : tempEndPage;
-    const pageArr = [];
+    useEffect(() => {
+        const startPage = Math.floor(pageNumber / pageSize) * pageSize + 1;
+        const tempEndPage = startPage + pageSize - 1;
+        const endPage = tempEndPage > totalPages ? totalPages : tempEndPage;
 
-    for(let i = startPage; i <= endPage; i++) {
-        pageArr.push(i);
-    }
-
+        const tempArr = [];
+        
+        for(let i = startPage; i <= endPage; i++) {
+            console.log(totalPages);
+            tempArr.push(i);
+        }
+        setPageArr(() => tempArr);
+    }, [totalPages, pageNumber, pageSize]);
 
   return (
     <div style={{textAlign: 'center'}}>
@@ -27,21 +32,21 @@ const Pagination = ({totalPages, pageNumber, pageSize, clickPrevNext, changePage
             </li>
 
             <li className="pagination-btn">
-                {/* for문으로 돌리고, map을 쓴다. */}
                 {pageArr && pageArr.map(
-                    // num의 값을 뽑아낸다.
-                    num => <Link>{num}</Link>
+                    num => <Link onClick={(e) => {
+                        e.preventDefault();
+                        changePage(num);
+                    }}>{num}</Link>
                 )}
-
             </li>
 
             <li className="pagination-btn">
                 <Link onClick={(e) => {
-                        e.preventDefault();
-                        clickPrevNext(1);
-                    }}>               
-                    다음
-                    </Link>
+                    e.preventDefault();
+                    clickPrevNext(1);
+                }}>
+                다음
+                </Link>
             </li>
         </ul>
     </div>
